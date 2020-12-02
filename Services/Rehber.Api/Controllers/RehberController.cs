@@ -35,11 +35,7 @@ namespace Rehber.Api.Controllers
             using(var db  = new setur_databaseContext()){
                 //rehberde kayitli kisiler alinir
                 res = db.Kisilers.OrderBy(a => a.Soyad).ThenBy(a => a.Ad).ToList();
-            }
-            res.Add(new Kisiler(){
-                Ad="Umut",
-                Soyad="Yildirim"
-            });
+            }            
             // eger liste bos ise bulunamadi donulur
             if(res.Count == 0){
                 return NotFound();
