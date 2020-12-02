@@ -79,7 +79,37 @@ namespace Rapor.Api.Controllers
         }
 
 
-        
+        /// <summary>
+        /// Yeni Rapor talebi olusturur
+        /// Rapor bilgileri hatali ise hatali alanlari doner
+        /// Islemde hata olusur ise hata bilgilerini doner
+        /// </summary>
+        /// <param name="rapor">Hazirlanacak rapor bilgileri</param>
+        /// <returns>Basarili ise eklenen rapor bilgisini doner</returns>
+        [HttpPost]
+        [Consumes(MediaTypeNames.Application.Json)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> CreateAsync(Raporlar rapor)
+        {
+            if(ModelState.IsValid){
+                try {
+                    using(var db = new setur_databaseContext())
+                    {
+                        await db.Raporlars.AddAsync(rapor);
+                        await db.SaveChangesAsync();
+
+                        // Kafkaya rapor hazirlama islemini bildir
+                        return Ok(rapor);
+                    }
+                }
+                catch (Exception ex){
+                    return BadRequest(ex);   
+                }
+            }
+            
+            return BadRequest(ModelState);            
+        }
 
         
     }
