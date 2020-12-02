@@ -83,10 +83,10 @@ namespace Rehber.Api.Controllers
         /// Islemde hata olusur ise hata bilgilerini doner
         /// </summary>
         /// <param name="kisi">Rehbere eklenecek kisi bilgileri</param>
-        /// <returns></returns>
+        /// <returns>Basarili ise eklenen kisi bilgisini doner</returns>
         [HttpPost]
         [Consumes(MediaTypeNames.Application.Json)]
-        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> CreateAsync(Kisiler kisi)
         {
@@ -96,7 +96,7 @@ namespace Rehber.Api.Controllers
                     {
                         await db.Kisilers.AddAsync(kisi);
                         await db.SaveChangesAsync();
-                        return CreatedAtAction(nameof(GetKisiById),new { id = kisi.KisiId }, kisi);
+                        return Ok(kisi);
                     }
                 }
                 catch (Exception ex){
@@ -107,6 +107,11 @@ namespace Rehber.Api.Controllers
             return BadRequest(ModelState);            
         }
 
+        /// <summary>
+        /// Ilgili kisi bilgisini kaldirir
+        /// </summary>
+        /// <param name="id">kisi ID bilgisi</param>
+        /// <returns>Basarili ise OK doner</returns>
         [HttpDelete]
         [Consumes(MediaTypeNames.Application.Json)]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -132,6 +137,43 @@ namespace Rehber.Api.Controllers
                 catch (Exception ex){
                     return BadRequest(ex);   
                 }     
+        }
+
+        
+        /// <summary>
+        /// Varolan kisiye iletisim bilgisi ekler.
+        /// Bilgi Tipi olarak 
+        /// 1 - Telefon Numarasi
+        /// 2 - E-mail Adresi
+        /// 3 - Konum
+        /// seklinde kullanilir. Bunlarin disindaki degerlerde hata doner
+        /// </summary>
+        /// <param name="bilgi">Eklenecek Iletisim Bilgisi</param>
+        /// <returns>Islem sonucunu Ok ya da Hata olarak doner</returns>
+        [HttpPost]
+        [Consumes(MediaTypeNames.Application.Json)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> CreateIletisimBilgisi(Iletisimbilgileri bilgi)
+        {
+            if(ModelState.IsValid){
+                try {
+                    if(bilgi.BilgiTipi <1 || bilgi.BilgiTipi > 3){
+                        throw new ArgumentOutOfRangeException("Bilgi Tipi 1 ile 3 arasinda olmalidir");
+                    }
+                    using(var db = new setur_databaseContext())
+                    {
+                        await db.Iletisimbilgileris.AddAsync(bilgi);
+                        await db.SaveChangesAsync();
+                        return Ok(bilgi);
+                    }
+                }
+                catch (Exception ex){
+                    return BadRequest(ex);   
+                }
+            }
+            
+            return BadRequest(ModelState);            
         }
 
     }
