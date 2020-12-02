@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Mime;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -73,6 +74,36 @@ namespace Rehber.Api.Controllers
                 return Ok(res);
             }
             
+        }
+
+
+        /// <summary>
+        /// Rehbere yeni kisi ekler
+        /// Kisi bilgileri hatali ise hatali alanlari doner
+        /// Islemde hata olusur ise hata bilgilerini doner
+        /// </summary>
+        /// <param name="kisi">Rehbere eklenecek kisi bilgileri</param>
+        /// <returns></returns>
+        [HttpPost]
+        [Consumes(MediaTypeNames.Application.Json)]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> CreateAsync(Kisiler kisi)
+        {
+            if(ModelState.IsValid){
+                try {
+                    using(var db = new setur_databaseContext()){
+                        await db.Kisilers.AddAsync(kisi);
+                        await db.SaveChangesAsync();
+                        return CreatedAtAction(nameof(GetKisiById),new { id = kisi.KisiId }, kisi);
+                    }
+                }
+                catch (Exception ex){
+                    return BadRequest(ex);   
+                }
+            }
+            
+            return BadRequest(ModelState);            
         }
 
     }
