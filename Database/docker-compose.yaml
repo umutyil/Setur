@@ -1,0 +1,27 @@
+version: '3'
+services:
+  database:
+    image: "postgres" # use latest official postgres version
+    ports:
+      - 5432:5432
+    env_file:
+      - /Database/database.env # configure postgres
+    volumes:
+      - database-data:/var/lib/postgresql/data/ # persist data even if container shuts down
+      - ./Database/init.sql:/docker-entrypoint-initdb.d/init.sql
+  pgadmin:
+    image: dpage/pgadmin4
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@umut.com
+      PGADMIN_DEFAULT_PASSWORD: secret
+      PGADMIN_LISTEN_PORT: 80
+    ports:
+      - "8080:80"
+    volumes:
+      - pgadmin-data:/var/lib/pgadmin
+    links:
+      - "database:pgsql-server"
+volumes:
+  database-data: # named volumes can be managed easier using docker-compose
+  pgadmin-data: 
