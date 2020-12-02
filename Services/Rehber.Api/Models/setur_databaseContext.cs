@@ -1,6 +1,7 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.Extensions.Configuration;
 
 #nullable disable
 
@@ -23,10 +24,17 @@ namespace Rehber.Api.Models
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
+            
             if (!optionsBuilder.IsConfigured)
             {
-                //optionsBuilder.UseNpgsql(Configuration);
+                IConfigurationRoot configuration = new ConfigurationBuilder()                 
+                .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
+                .AddJsonFile("appsettings.json")
+                .Build();
+                
+                optionsBuilder.UseNpgsql(configuration.GetConnectionString("SeturConnection"));
             }
+            
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
