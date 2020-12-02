@@ -32,12 +32,14 @@ namespace Rehber.Api.Controllers
         {
             var res = new List<Kisiler>();
             using(var db  = new setur_databaseContext()){
+                //rehberde kayitli kisiler alinir
                 res = db.Kisilers.OrderBy(a => a.Soyad).ThenBy(a => a.Ad).ToList();
             }
             res.Add(new Kisiler(){
                 Ad="Umut",
                 Soyad="Yildirim"
             });
+            // eger liste bos ise bulunamadi donulur
             if(res.Count == 0){
                 return NotFound();
             }
@@ -55,9 +57,17 @@ namespace Rehber.Api.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public IActionResult GetKisiById(string id){
             using(var db  = new setur_databaseContext()){
+                // Kisi bilgisi vt den primary key ile sorgulanir
                 var res = db.Kisilers.Find(id);
+                // eslesme bulunamadi
                 if(res == null){
                     return NotFound();
+                } else { // eslesme bulundu
+                    //detay bilgileri var mi?
+                    if(res.Iletisimbilgileris.Count == 0){
+                        // yoksa ekle
+                        res.Iletisimbilgileris = db.Iletisimbilgileris.Where(a => a.KisiId == res.KisiId).ToList();
+                    }
                 }
 
                 return Ok(res);
