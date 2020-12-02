@@ -3,9 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Mime;
 using System.Threading.Tasks;
+using Confluent.Kafka;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
+using Rapor.Api.Kafka;
 using Rapor.Api.Models;
 
 namespace Rapor.Api.Controllers
@@ -17,9 +20,12 @@ namespace Rapor.Api.Controllers
         
         private readonly ILogger<RaporController> _logger;
 
-        public RaporController(ILogger<RaporController> logger)
+        private readonly ProducerConfig config;
+
+        public RaporController(ILogger<RaporController> logger, ProducerConfig config)
         {
             _logger = logger;
+            this.config = config;
         }
 
         /// <summary>
@@ -112,6 +118,10 @@ namespace Rapor.Api.Controllers
                         await db.SaveChangesAsync();
 
                         // Kafkaya rapor hazirlama islemini bildir
+                        string serializedOrder = JsonConvert.SerializeObject(rapor);           
+
+                        var producer = new ProducerWrapper(this.config,"raporrequests");
+                        await producer.writeMessage(serializedOrder);
                         return Ok(rapor);
                     }
                 }
