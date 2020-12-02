@@ -176,5 +176,35 @@ namespace Rehber.Api.Controllers
             return BadRequest(ModelState);            
         }
 
+
+        /// <summary>
+        /// Iletisim bilgisini siler
+        /// </summary>
+        /// <param name="id">Iletisim bilgisi ID</param>
+        /// <returns>Islem sonucunu Ok ya da Hata olarak doner</returns>
+        [HttpDelete]
+        [Consumes(MediaTypeNames.Application.Json)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public IActionResult DeleteIletisimBilgisi(string id)
+        {
+            try {
+                    using(var db = new setur_databaseContext())
+                    {
+                        var iletisimBilgisi = db.Iletisimbilgileris.Find(id);
+                        // eger iletisim bilgisi var ise
+                        if(iletisimBilgisi != null){
+                            //iletisim bilgileri alinir ve silinir                            
+                            db.Iletisimbilgileris.Remove(iletisimBilgisi);                            
+                            db.SaveChanges();
+                        }
+                        
+                        return Ok();
+                    }
+                }
+                catch (Exception ex){
+                    return BadRequest(ex);   
+                }     
+        }
     }
 }
