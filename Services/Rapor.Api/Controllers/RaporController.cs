@@ -60,8 +60,9 @@ namespace Rapor.Api.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public IActionResult GetRaporById(string id){
             using(var db  = new setur_databaseContext()){
-                // Kisi bilgisi vt den primary key ile sorgulanir
+                // Rapor bilgisi vt den primary key ile sorgulanir
                 var res = db.Raporlars.Find(id);
+                var sonuc= new RaporIcerik();
                 // eslesme bulunamadi
                 if(res == null){
                     return NotFound();
@@ -69,11 +70,22 @@ namespace Rapor.Api.Controllers
                     //Rapor durumu Tamamlandi mi?
                     if(res.Durum == 1){
                         // yoksa ekle
-                        return BadRequest("Rapor su an hazirlanmaktadir")
+                        return BadRequest("Rapor su an hazirlanmaktadir");
                     }
+
+                    // Oncelikle konum bilgisi girilen deger olan tum iletisim bilgileri alinir
+                    var iletisimler = db.Iletisimbilgileris.Where(a => a.BilgiTipi == 3 && a.Icerik == res.Icerik).ToList();
+                    sonuc.Konum = res.Icerik;
+                    // Tekil kisi sayisi hesaplanir
+                    var kisilerTekil =iletisimler.Select(a => a.KisiId).Distinct().ToList();
+                    var kisiSayisi = kisilerTekil.Count();
+                    sonuc.KisiSayisi = kisiSayisi;
+                    // Bu konumdaki kisilere ait telefon numaralari sayilir
+                    var telefonSayisi = iletisimler.Where(a => kisilerTekil.Contains(a.KisiId) && a.BilgiTipi == 1).Count();
+                    sonuc.TelefonNumarasiSayisi = telefonSayisi;
                 }
 
-                return Ok(res);
+                return Ok(sonuc);
             }
             
         }
