@@ -3,7 +3,7 @@ version: '3.5'
 services:
 
   Rehber.Api:
-    image: Rehber.Api       
+    image: rehber.api       
     build:
       context: ./Services/Rehber.Api
       dockerfile: Dockerfile.debug
@@ -16,7 +16,7 @@ services:
       - database
 
   Rapor.Api:
-    image: Rapor.Api
+    image: rapor.api
     build:
       context: ./Services/Rapor.Api
       dockerfile: Dockerfile.debug
@@ -33,7 +33,7 @@ services:
     ports:
       - 5432:5432
     env_file:
-      - /Database/database.env 
+      - ./Database/database.env 
     volumes:
       - database-data:/var/lib/postgresql/data/ 
       - ./Database/init.sql:/docker-entrypoint-initdb.d/init.sql
