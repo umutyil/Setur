@@ -92,7 +92,8 @@ namespace Rehber.Api.Controllers
         {
             if(ModelState.IsValid){
                 try {
-                    using(var db = new setur_databaseContext()){
+                    using(var db = new setur_databaseContext())
+                    {
                         await db.Kisilers.AddAsync(kisi);
                         await db.SaveChangesAsync();
                         return CreatedAtAction(nameof(GetKisiById),new { id = kisi.KisiId }, kisi);
@@ -104,6 +105,33 @@ namespace Rehber.Api.Controllers
             }
             
             return BadRequest(ModelState);            
+        }
+
+        [HttpDelete]
+        [Consumes(MediaTypeNames.Application.Json)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public IActionResult Delete(string id)
+        {
+            try {
+                    using(var db = new setur_databaseContext())
+                    {
+                        var kisi = db.Kisilers.Find(id);
+                        // eger kisi var ise
+                        if(kisi != null){
+                            //iletisim bilgileri alinir ve silinir
+                            var iletisimBilgileri = db.Iletisimbilgileris.Where(a => a.KisiId == kisi.KisiId).ToList();
+                            db.Iletisimbilgileris.RemoveRange(iletisimBilgileri);
+                            db.Kisilers.Remove(kisi);
+                            db.SaveChanges();
+                        }
+                        
+                        return Ok();
+                    }
+                }
+                catch (Exception ex){
+                    return BadRequest(ex);   
+                }     
         }
 
     }
