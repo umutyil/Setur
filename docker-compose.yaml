@@ -10,7 +10,7 @@ services:
     ports: 
     - "8081:80"
     volumes: 
-      - ./Services/Rehber.Api/bin/pub/:/app
+      - ./Services/Rehber.Api/bin/release/net5.0/:/app
     container_name: Rehber.Api
     depends_on:
       - database
@@ -23,7 +23,7 @@ services:
     ports: 
     - "8084:80"
     volumes: 
-      - ./Services/Rapor.Api/bin/pub/:/app
+      - ./Services/Rapor.Api/bin/release/net5.0/:/app
     container_name: Rapor.Api   
     depends_on:
       - database

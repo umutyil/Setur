@@ -1,4 +1,4 @@
-FROM microsoft/aspnetcore:latest
+FROM mcr.microsoft.com/dotnet/aspnet:5.0
 RUN mkdir app
 
 #Install debugger
@@ -9,4 +9,5 @@ RUN curl -sSL https://aka.ms/getvsdbgsh | bash /dev/stdin -v latest -l /vsdbg
 EXPOSE 80/tcp
 
 #Keep the debugger container on
-ENTRYPOINT ["tail", "-f", "/dev/null"]
+WORKDIR /app
+ENTRYPOINT ["dotnet", "Rapor.Api.dll"]
