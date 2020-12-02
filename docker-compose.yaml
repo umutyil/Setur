@@ -1,0 +1,25 @@
+version: '3'
+
+services:
+
+  Rehber.Api:
+    image: Rehber.Api       
+    build:
+      context: ./Services/Rehber.Api
+      dockerfile: Dockerfile.debug
+    ports: 
+    - "8081:80"
+    volumes: 
+      - ./Services/Rehber.Api/bin/pub/:/app
+    container_name: Rehber.Api
+
+  Rapor.Api:
+    image: Rapor.Api
+    build:
+      context: ./Services/Rapor.Api
+      dockerfile: Dockerfile.debug
+    ports: 
+    - "8084:80"
+    volumes: 
+      - ./Services/Rapor.Api/bin/pub/:/app
+    container_name: Rapor.Api     
