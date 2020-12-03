@@ -2,15 +2,19 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Confluent.Kafka;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
+using Rapor.Api.Kafka;
+using Rapor.Api.Models;
 
 namespace Rapor.Api
 {
@@ -28,10 +32,21 @@ namespace Rapor.Api
         {
 
             services.AddControllers();
+            services.AddDbContext<setur_databaseContext>(opt =>
+                opt.UseNpgsql(Configuration.GetConnectionString("SeturConnection"))
+            );
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Rapor.Api", Version = "v1" });
             });
+            services.AddSingleton<IHostedService, ProcessRaporService>();
+            var producerConfig = new ProducerConfig();
+            var consumerConfig = new ConsumerConfig();
+            Configuration.Bind("producer",producerConfig);
+            Configuration.Bind("consumer",consumerConfig);
+
+            services.AddSingleton<ProducerConfig>(producerConfig);
+            services.AddSingleton<ConsumerConfig>(consumerConfig);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

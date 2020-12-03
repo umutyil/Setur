@@ -30,7 +30,7 @@ namespace Rehber.Api
         {
 
             services.AddControllers();
-            services.AddEntityFrameworkNpgsql().AddDbContext<setur_databaseContext>(opt =>
+            services.AddDbContext<setur_databaseContext>(opt =>
                 opt.UseNpgsql(Configuration.GetConnectionString("SeturConnection"))
             );
             services.AddSwaggerGen(c =>
