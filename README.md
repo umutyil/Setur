@@ -47,12 +47,9 @@ Bu işlem bir defa yapılacaktır.
 
 ### Yapılan Tercihler
 
-- Güvenlik
-Gereksinimler içerisinde herhangi bir güvenlik isteği belirtilmediği için bir güvenlik yapısı sistemde bulunmamaktadır.
-- Loglama
-Gereksinimler içerisinde herhangi bir loglama isteği belirtilmediği için bir loglama yapılmamaktadır. dotnet ile oluşturulan proje içerisinde kendiliğinden gelen ILogger yapısı muhafaza edilmiştir.
-- Unit Test
-Vakit yetersizliği sebebi ile unit test projesi ve mock-up yapısı uygulanamamıştır.
+- **Güvenlik**: Gereksinimler içerisinde herhangi bir güvenlik isteği belirtilmediği için bir güvenlik yapısı sistemde bulunmamaktadır.
+- **Loglama**: Gereksinimler içerisinde herhangi bir loglama isteği belirtilmediği için bir loglama yapılmamaktadır. dotnet ile oluşturulan proje içerisinde kendiliğinden gelen ILogger yapısı muhafaza edilmiştir.
+- **Unit Test**: Vakit yetersizliği sebebi ile unit test projesi ve mock-up yapısı uygulanamamıştır.
 
 ### İyileştirmeler
 - Unit Test projesinin oluşturularak solution a eklenmesi
